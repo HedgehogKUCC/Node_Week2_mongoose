@@ -64,6 +64,28 @@ const requestListener = async (req, res) => {
         } catch(err) {
             error(res, err.message);
         }
+    } else if ( req.url.startsWith('/posts/') && req.method === 'PATCH' ) {
+        req.on('end', async () => {
+            try {
+                const id = req.url.split('/').pop();
+                const { content } = JSON.parse(body);
+
+                if ( !content ) {
+                    error(res, '【內容】必填');
+                    return;
+                }
+
+                const data = await PostModel.findByIdAndUpdate(
+                    id,
+                    {
+                        content,
+                    }
+                )
+                success(res, data);
+            } catch(err) {
+                error(res, err.message);
+            }
+        });
     } else if ( req.method === 'OPTIONS' ) {
         res.writeHead(200);
         res.end();
