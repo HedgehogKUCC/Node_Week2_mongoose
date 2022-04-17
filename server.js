@@ -56,6 +56,14 @@ const requestListener = async (req, res) => {
         } catch(err) {
             error(res, err.message);
         }
+    } else if ( req.url.startsWith('/posts/') && req.method === 'DELETE' ) {
+        try {
+            const id = req.url.split('/').pop();
+            const data = await PostModel.findByIdAndDelete(id);
+            success(res, data);
+        } catch(err) {
+            error(res, err.message);
+        }
     } else if ( req.method === 'OPTIONS' ) {
         res.writeHead(200);
         res.end();
