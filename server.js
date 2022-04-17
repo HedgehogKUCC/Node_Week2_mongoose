@@ -1,6 +1,8 @@
 const http = require('http');
 const mongoose = require('mongoose');
 
+const { success, error } = require('./responseHandle.js');
+
 const PostModel = require('./models/Post.js');
 
 const PORT = 3005;
@@ -22,24 +24,18 @@ const requestListener = async (req, res) => {
         res.write('<h1>Home Page</h1>');
         res.end();
     } else if ( req.url === '/posts' && req.method === 'GET' ) {
-        const data = await PostModel.find();
-        res.writeHead(200, {'Content-Type': 'application/json'});
-        res.write(JSON.stringify({
-            result: true,
-            data,
-        }));
-        res.end();
+        try {
+            const data = await PostModel.find();
+            success(res, data);
+        } catch(err) {
+            error(res, err.message);
+        }
     } else if ( req.url === '/posts' && req.method === 'POST' ) {
         req.on('end', async () => {
             try {
                 const { content } = JSON.parse(body);
                 if ( !content ) {
-                    res.writeHead(400, {'Content-Type': 'application/json'});
-                    res.write(JSON.stringify({
-                        result: false,
-                        msg: '【內容】必填',
-                    }));
-                    res.end();
+                    error(res, '【內容】必填');
                     return;
                 }
 
@@ -48,19 +44,9 @@ const requestListener = async (req, res) => {
                         content,
                     }
                 );
-                res.writeHead(200, {'Content-Type': 'application/json'});
-                res.write(JSON.stringify({
-                    result: true,
-                    data,
-                }));
-                res.end();
+                success(res, data);
             } catch(err) {
-                res.writeHead(400, {'Content-Type': 'application/json'});
-                res.write(JSON.stringify({
-                    result: false,
-                    msg: err.message,
-                }));
-                res.end();
+                error(res, err.message);
             }
         });
     } else if ( req.method === 'OPTIONS' ) {
