@@ -1,5 +1,6 @@
 const http = require('http');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
 const { success, error } = require('./responseHandle.js');
 
@@ -7,8 +8,19 @@ const PostModel = require('./models/Post.js');
 
 const PORT = 3005;
 
+dotenv.config(
+    {
+        path: './config.env',
+    }
+);
+
+const DB = process.env.MongoDB.replace(
+    '<password>',
+    process.env.MongoDB_Password,
+)
+
 mongoose
-    .connect('mongodb://localhost:27017/week2')
+    .connect(DB)
     .then(() => console.log('mongodb is connected...'))
     .catch((err) => console.log(err.message));
 
