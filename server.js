@@ -49,6 +49,13 @@ const requestListener = async (req, res) => {
                 error(res, err.message);
             }
         });
+    } else if ( req.url === '/posts' && req.method === 'DELETE' ) {
+        try {
+            await PostModel.deleteMany({});
+            success(res, []);
+        } catch(err) {
+            error(res, err.message);
+        }
     } else if ( req.method === 'OPTIONS' ) {
         res.writeHead(200);
         res.end();
