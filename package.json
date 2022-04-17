@@ -11,5 +11,8 @@
   "license": "MIT",
   "engines": {
     "node": "16.14.2"
+  },
+  "dependencies": {
+    "mongoose": "6.3.0"
   }
 }
